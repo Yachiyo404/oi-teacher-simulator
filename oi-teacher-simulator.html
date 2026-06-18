@@ -1208,7 +1208,12 @@ function checkAchievements(compResult, context) {
     } else if (compResult) {
       pass = ach.check(game, compResult, context);
     } else {
-      pass = ach.check(game, null, context);
+      // Skip competition-dependent achievements when no compResult
+      try {
+        pass = ach.check(game, null, context);
+      } catch(e) {
+        pass = false;
+      }
     }
     if (pass) {
       game.achievements.push({ id: ach.id, name: ach.name, desc: ach.desc });
