@@ -142,6 +142,17 @@ body {
 #actions-panel h3 {
   font-size: 0.9em; color: #8899aa; margin-bottom: 6px;
 }
+.action-tabs {
+  display: flex; gap: 4px; margin-bottom: 8px;
+}
+.action-tab {
+  flex: 1; padding: 6px 0; text-align: center; font-size: 0.82em; font-weight: bold;
+  background: #111128; border: 1px solid #2a2a4a; border-radius: 6px;
+  cursor: pointer; color: #667; transition: all 0.2s;
+}
+.action-tab.active {
+  background: #1a1a4a; border-color: #5a7acc; color: #7ecfff;
+}
 #actions-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -405,6 +416,10 @@ body {
 
   <div id="actions-panel">
     <h3 id="actions-header">📋 本周行动</h3>
+    <div class="action-tabs">
+      <div class="action-tab active" id="tab-culture" onclick="switchActionTab('culture')">📖 文化课</div>
+      <div class="action-tab" id="tab-compete" onclick="switchActionTab('compete')">🏆 竞赛</div>
+    </div>
     <div id="actions-grid"></div>
   </div>
 
@@ -452,53 +467,57 @@ const STUDENT_TEMPLATES = [
 ];
 
 const WEEKLY_ACTIONS = [
-  { id: 'teach', name: '精心备课', icon: '📖',
+  // 文化课
+  { id: 'teach', name: '精心备课', icon: '📖', category: 'culture',
     cost: { energy: -15 }, effect: { teaching: 5 },
     studentBoost: { algo: [2,4], mental: [-2,0] },
     desc: '深入准备本周课程，提升教学质量' },
-  { id: 'mock', name: '组织模拟赛', icon: '🏆',
-    cost: { energy: -20, budget: -5 }, effect: { teaching: 3, reputation: 3 },
-    studentBoost: { algo: [3,6], exp: [2,4], mental: [-5,0] },
-    desc: '举办一次内部模拟赛，锻炼实战能力' },
-  { id: 'tutor', name: '个别辅导', icon: '🎯',
-    cost: { energy: -15 }, effect: { teaching: 2 },
-    studentTarget: { algo: [8,15], mental: [3,8] },
-    desc: '针对薄弱学生进行一对一辅导' },
-  { id: 'report', name: '写教学报告', icon: '📝',
+  { id: 'report', name: '写教学报告', icon: '📝', category: 'culture',
     cost: { energy: -10 }, effect: { '学校好感': 8 },
     desc: '向校领导汇报竞赛班进展，争取支持' },
-  { id: 'lobby', name: '申请额外经费', icon: '💰',
-    cost: { energy: -10 }, effect: { budget: [10,20], '学校好感': [-5,3] },
-    desc: '软磨硬泡向学校要钱，但可能惹恼领导' },
-  { id: 'rest', name: '休息调整', icon: '😴',
-    cost: {}, effect: { energy: 30 },
-    studentBoost: { mental: [2,5] },
-    desc: '给自己放个假，也给学生们喘口气' },
-  { id: 'outreach', name: '邀请外校交流', icon: '🤝',
-    cost: { energy: -15, budget: -8 }, effect: { reputation: 5, teaching: 3 },
-    studentBoost: { algo: [2,5], exp: [3,6] },
-    desc: '联系其他学校的竞赛教练，组织联合训练' },
-  { id: 'algorithm', name: '专题算法课', icon: '🧮',
-    cost: { energy: -20 }, effect: { teaching: 6 },
-    studentBoost: { algo: [3,7], exp: [1,3], mental: [-3,0] },
-    desc: '集中攻克某个高难度算法专题' },
-  { id: 'buy_book', name: '购置竞赛书籍', icon: '📚',
+  { id: 'buy_book', name: '购置竞赛书籍', icon: '📚', category: 'culture',
     cost: { budget: -10 }, effect: { teaching: 2 },
     studentBoost: { algo: [1,3], math: [1,3], mental: [1,3] },
     desc: '添置最新的OI参考书和学习资料' },
-  { id: 'mental_care', name: '心理疏导', icon: '💬',
+  { id: 'mental_care', name: '心理疏导', icon: '💬', category: 'culture',
     cost: { energy: -10 }, effect: { reputation: 2 },
     studentBoost: { mental: [5,12] },
     desc: '找学生们聊聊，缓解竞赛压力' },
-  { id: 'cf_train', name: 'CF/ATC刷题', icon: '💻',
+  { id: 'rest', name: '休息调整', icon: '😴', category: 'culture',
+    cost: {}, effect: { energy: 30 },
+    studentBoost: { mental: [2,5] },
+    desc: '给自己放个假，也给学生们喘口气' },
+  // 竞赛
+  { id: 'mock', name: '组织模拟赛', icon: '🏆', category: 'compete',
+    cost: { energy: -20, budget: -5 }, effect: { teaching: 3, reputation: 3 },
+    studentBoost: { algo: [3,6], exp: [2,4], mental: [-5,0] },
+    desc: '举办一次内部模拟赛，锻炼实战能力' },
+  { id: 'algorithm', name: '专题算法课', icon: '🧮', category: 'compete',
+    cost: { energy: -20 }, effect: { teaching: 6 },
+    studentBoost: { algo: [3,7], exp: [1,3], mental: [-3,0] },
+    desc: '集中攻克某个高难度算法专题' },
+  { id: 'cf_train', name: 'CF/ATC刷题', icon: '💻', category: 'compete',
     cost: { energy: -12 }, effect: { teaching: 2 },
     studentBoost: { algo: [2,5], effort: [3,6], mental: [-3,2] },
     desc: '带学生在线实战，培养手感' },
-  { id: 'skip', name: '摆烂摸鱼', icon: '🦥',
+  { id: 'tutor', name: '个别辅导', icon: '🎯', category: 'compete',
+    cost: { energy: -15 }, effect: { teaching: 2 },
+    studentTarget: { algo: [8,15], mental: [3,8] },
+    desc: '针对薄弱学生进行一对一辅导' },
+  { id: 'outreach', name: '邀请外校交流', icon: '🤝', category: 'compete',
+    cost: { energy: -15, budget: -8 }, effect: { reputation: 5, teaching: 3 },
+    studentBoost: { algo: [2,5], exp: [3,6] },
+    desc: '联系其他学校的竞赛教练，组织联合训练' },
+  { id: 'lobby', name: '申请额外经费', icon: '💰', category: 'compete',
+    cost: { energy: -10 }, effect: { budget: [10,20], '学校好感': [-5,3] },
+    desc: '软磨硬泡向学校要钱，但可能惹恼领导' },
+  { id: 'skip', name: '摆烂摸鱼', icon: '🦥', category: 'compete',
     cost: {}, effect: { energy: 15, '学校好感': -5 },
     studentBoost: { mental: [3,8], algo: [-3,0] },
     desc: '这周累了，大家一起摸了吧' },
 ];
+
+let currentActionTab = 'culture';
 
 const RANDOM_EVENTS = [
   { id: 'parent_call', title: '家长来电',
@@ -838,12 +857,20 @@ function renderStudents() {
   }).join('');
 }
 
+function switchActionTab(tab) {
+  currentActionTab = tab;
+  document.getElementById('tab-culture').classList.toggle('active', tab === 'culture');
+  document.getElementById('tab-compete').classList.toggle('active', tab === 'compete');
+  renderActions();
+}
+
 function renderActions() {
   const grid = document.getElementById('actions-grid');
   const diff = DIFFICULTIES[game.difficulty];
   document.getElementById('actions-header').textContent = `📋 本周行动（选择${diff.actionsPerWeek}项）`;
   const available = game.actionsLeft > 0;
-  grid.innerHTML = WEEKLY_ACTIONS.map(a => {
+  const filtered = WEEKLY_ACTIONS.filter(a => a.category === currentActionTab);
+  grid.innerHTML = filtered.map(a => {
     const canAfford = checkActionCost(a);
     const disabled = !available || !canAfford;
     return `<button class="action-btn" ${disabled ? 'disabled' : ''}
