@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OI班主任模拟器 - 简化版</title>
+<style>
+body {
+  font-family: 'Microsoft YaHei', sans-serif;
+  background: #0a0a1a;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #141430;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #3a5a8c;
+}
+.screen { display: none; }
+.screen.active { display: block; }
+.btn {
+  background: linear-gradient(135deg, #5a7acc, #3a5aac);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.btn:hover { background: linear-gradient(135deg, #6a8aee, #4a6acc); }
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-box {
+  background: #1a1a3a;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #2a3a5c;
+}
+.student-card {
+  background: #1a1a3a;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: 1px solid #2a3a5c;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 标题屏幕 -->
+  <div id="titleScreen" class="screen active">
+    <h1>🏫 OI班主任模拟器</h1>
+    <p>你是一位信息学竞赛班的班主任，带领学生冲击NOI</p>
+    <button class="btn" onclick="startGame()">新游戏</button>
+  </div>
+
+  <!-- 游戏屏幕 -->
+  <div id="gameScreen" class="screen">
+    <h2>竞赛班管理系统</h2>
+    
+    <!-- 状态栏 -->
+    <div class="stats-container">
+      <div class="stat-box">教学水平: <span id="teachingValue">50</span></div>
+      <div class="stat-box">声望: <span id="reputationValue">20</span></div>
+      <div class="stat-box">精力: <span id="energyValue">100</span></div>
+      <div class="stat-box">经费: <span id="budgetValue">30</span></div>
+      <div class="stat-box">校方好感: <span id="schoolValue">50</span></div>
+      <div class="stat-box">行动剩余: <span id="actionsValue">3</span></div>
+    </div>
+    
+    <!-- 学生信息 -->
+    <h3>学生档案</h3>
+    <div id="studentsContainer"></div>
+    
+    <!-- 行动选择 -->
+    <h3>本周行动</h3>
+    <div id="actionsContainer"></div>
+    
+    <!-- 日志 -->
+    <h3>事件日志</h3>
+    <div id="logContainer" style="height: 150px; overflow-y: auto; background: #0c0c1e; padding: 10px; border-radius: 6px;"></div>
+    
+    <button class="btn" onclick="showScreen('titleScreen')" style="margin-top: 20px;">返回标题</button>
+  </div>
+</div>
+
+<script>
+// 游戏状态
+let gameState = null;
+
+// 学生模板
+const STUDENT_TEMPLATES = [
+  { name: '陈锐', algo: 65, math: 70, mental: 60, effort: 55, exp: 40, desc: '神犇' },
+  { name: '林小雨', algo: 45, math: 60, mental: 45, effort: 80, exp: 25, desc: '卷王' },
+  { name: '张浩宇', algo: 55, math: 80, mental: 70, effort: 30, exp: 35, desc: '天赋流' },
+  { name: '王思远', algo: 30, math: 45, mental: 40, effort: 50, exp: 15, desc: '学弱' },
+  { name: '赵欣然', algo: 40, math: 65, mental: 75, effort: 65, exp: 20, desc: '黑马' }
+];
+
+// 行动选项
+const ACTIONS = [
+  { id: 'teach', name: '精心备课', energy: -15, teaching: 5, desc: '提升教学质量' },
+  { id: 'mock', name: '模拟赛', energy: -20, budget: -5, teaching: 3, reputation: 3, desc: '锻炼实战能力' },
+  { id: 'tutor', name: '个别辅导', energy: -15, teaching: 2, desc: '针对性提升' },
+  { id: 'report', name: '写报告', energy: -10, school: 8, desc: '向校方汇报' },
+  { id: 'rest', name: '休息调整', energy: 30, desc: '恢复精力' }
+];
+
+// 显示指定屏幕
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+// 开始游戏
+function startGame() {
+  console.log("startGame called");
+  gameState = {
+    week: 1,
+    teaching: 50,
+    reputation: 20,
+    energy: 100,
+    budget: 30,
+    schoolFavor: 50,
+    actionsLeft: 3,
+    students: JSON.parse(JSON.stringify(STUDENT_TEMPLATES)),
+    log: []
+  };
+  
+  addLog("游戏开始！你成为了OI竞赛班的班主任。");
+  showScreen('gameScreen');
+  updateDisplay();
+}
+
+// 添加日志
+function addLog(message) {
+  if (gameState) {
+    const timestamp = `[第${gameState.week}周] ${message}`;
+    gameState.log.unshift(timestamp);
+    if (gameState.log.length > 50) gameState.log.pop();
+  }
+}
+
+// 更新显示
+function updateDisplay() {
+  if (!gameState) return;
+  
+  document.getElementById('teachingValue').textContent = gameState.teaching;
+  document.getElementById('reputationValue').textContent = gameState.reputation;
+  document.getElementById('energyValue').textContent = gameState.energy;
+  document.getElementById('budgetValue').textContent = gameState.budget;
+  document.getElementById('schoolValue').textContent = gameState.schoolFavor;
+  document.getElementById('actionsValue').textContent = gameState.actionsLeft;
+  
+  // 更新学生显示
+  const studentsHtml = gameState.students.map(s => 
+    `<div class="student-card">
+      <strong>${s.name}(${s.desc})</strong> - 算法:${s.algo} 数学:${s.math} 心理:${s.mental} 努力:${s.effort} 经验:${s.exp}
+    </div>`
+  ).join('');
+  document.getElementById('studentsContainer').innerHTML = studentsHtml;
+  
+  // 更新行动按钮
+  const actionsHtml = ACTIONS.map(action => 
+    `<button class="btn" ${gameState.actionsLeft <= 0 ? 'disabled' : ''} 
+      onclick="performAction('${action.id}')">${action.name}</button>`
+  ).join('');
+  document.getElementById('actionsContainer').innerHTML = actionsHtml;
+  
+  // 更新日志
+  document.getElementById('logContainer').innerHTML = 
+    gameState.log.map(log => `<div>${log}</div>`).join('');
+}
+
+// 执行行动
+function performAction(actionId) {
+  if (!gameState || gameState.actionsLeft <= 0) return;
+  
+  const action = ACTIONS.find(a => a.id === actionId);
+  if (!action) return;
+  
+  // 应用效果
+  if (action.energy) gameState.energy = Math.max(0, Math.min(100, gameState.energy + action.energy));
+  if (action.teaching) gameState.teaching = Math.max(0, Math.min(100, gameState.teaching + action.teaching));
+  if (action.reputation) gameState.reputation = Math.max(0, Math.min(100, gameState.reputation + action.reputation));
+  if (action.budget) gameState.budget = Math.max(0, Math.min(100, gameState.budget + action.budget));
+  if (action.school) gameState.schoolFavor = Math.max(0, Math.min(100, gameState.schoolFavor + action.school));
+  
+  gameState.actionsLeft--;
+  addLog(`执行了"${action.name}"行动`);
+  
+  updateDisplay();
+  
+  if (gameState.actionsLeft <= 0) {
+    setTimeout(nextWeek, 1000);
+  }
+}
+
+// 下一周
+function nextWeek() {
+  gameState.actionsLeft = 3;
+  gameState.week++;
+  addLog(`进入第${gameState.week}周`);
+  updateDisplay();
+}
+
+// 初始化页面
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Page loaded successfully");
+});
+
+// 检查全局错误
+window.onerror = function(msg, url, line) {
+    console.error("Global error:", msg, "at", url, "line", line);
+};
+</script>
+</body>
+</html>
