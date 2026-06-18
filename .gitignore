@@ -1,25 +1,11 @@
-# OpenClaw workspace personal files
-MEMORY.md
-USER.md
-IDENTITY.md
-SOUL.md
-AGENTS.md
-TOOLS.md
-HEARTBEAT.md
-avatars/
-memory/
-.openclaw/
-.clawhub/
+# Python
+__pycache__/
+*.py[cod]
 
-# Unrelated files
-debug-test.html
-test-js.html
-demo.pptx
-P1803_solution.cpp
-oi-teacher-simulator.tar.gz
+# Archives
+*.tar.gz
+*.zip
 
-# Skills (third-party)
-skills/
-
-# Node modules
-node_modules/
+# Temp files
+*.tmp
+*~
