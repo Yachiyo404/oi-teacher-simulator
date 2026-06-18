@@ -781,7 +781,7 @@ function selectDifficulty(diff) {
 
 function beginGame() {
   showScreen('game-screen');
-  const diff = DIFFICULTIES[game.difficulty];
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   addLog('system', `${diff.icon} 难度：${diff.name} | 每周${diff.actionsPerWeek}次行动`);
   renderAll();
   saveGame();
@@ -819,7 +819,8 @@ function renderStats() {
 function renderInfo() {
   document.getElementById('info-semester').textContent = SEMESTER_NAMES[game.semester - 1];
   document.getElementById('info-week').textContent = '第' + game.week + '周';
-  document.getElementById('info-action').textContent = '剩余行动：' + game.actionsLeft + '/' + DIFFICULTIES[game.difficulty].actionsPerWeek;
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
+  document.getElementById('info-action').textContent = '剩余行动：' + game.actionsLeft + '/' + diff.actionsPerWeek;
 }
 
 function renderAchievements() {
@@ -866,7 +867,7 @@ function switchActionTab(tab) {
 
 function renderActions() {
   const grid = document.getElementById('actions-grid');
-  const diff = DIFFICULTIES[game.difficulty];
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   document.getElementById('actions-header').textContent = `📋 本周行动（选择${diff.actionsPerWeek}项）`;
   const available = game.actionsLeft > 0;
   const filtered = WEEKLY_ACTIONS.filter(a => a.category === currentActionTab);
@@ -894,7 +895,7 @@ function doAction(actionId) {
   const action = WEEKLY_ACTIONS.find(a => a.id === actionId);
   if (!action) return;
 
-  const diff = DIFFICULTIES[game.difficulty];
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   // Apply teacher effects
   applyEffects(game.teacher, action.effect);
   // Apply energy cost with difficulty multiplier
@@ -990,7 +991,7 @@ function endWeek() {
   }
 
   // Random event (chance scaled by difficulty)
-  const diff = DIFFICULTIES[game.difficulty];
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   const availEvents = RANDOM_EVENTS.filter(e =>
     !game.eventsSeen.includes(e.id + '_' + game.week) &&
     e.condition(game) &&
@@ -1061,7 +1062,7 @@ function closeCompModal(compId) {
 }
 
 function evaluateCompetition(comp) {
-  const diff = DIFFICULTIES[game.difficulty];
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   const thMul = diff.compThresholdMul;
   const students = game.students.map(s => {
     const st = s.stats;
@@ -1163,7 +1164,7 @@ function resolveEvent(eventId, choiceIndex) {
 }
 
 function advanceWeek() {
-  game.actionsLeft = DIFFICULTIES[game.difficulty].actionsPerWeek;
+  game.actionsLeft = (DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal).actionsPerWeek;
   game.week++;
 
   if (game.week > TOTAL_WEEKS) {
@@ -1385,7 +1386,16 @@ function loadGame() {
     game._skipCount = 0;
     // Backward compatibility: old saves default to normal
     if (!game.difficulty) game.difficulty = 'normal';
+    if (!DIFFICULTIES[game.difficulty]) game.difficulty = 'normal';
     currentDifficulty = game.difficulty;
+    // Don't load finished games
+    if (game.ended) {
+      alert('这个存档已经通关了，请开始新游戏');
+      localStorage.removeItem('oi_teacher_save');
+      game = null;
+      checkSaveExists();
+      return;
+    }
     showScreen('game-screen');
     renderAll();
     addLog('system', '📂 存档已加载');
