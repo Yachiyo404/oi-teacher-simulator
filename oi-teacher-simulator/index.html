@@ -1,115 +1,159 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OI班主任模拟器</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OI班主任模拟器</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
+<div id="app">
 
-    <!-- Title Screen -->
-    <div id="title-screen" class="screen active">
-      <h1>🏫 OI班主任模拟器</h1>
-      <div class="subtitle">你是一位信息学竞赛班的班主任<br>带领学生从NOIP冲到NOI，在高压下生存两年</div>
-      <button class="btn primary" onclick="startGame()">新游戏</button>
-      <button class="btn" id="btn-load" onclick="loadGame()" disabled>继续游戏</button>
+<!-- Title Screen -->
+<div id="title-screen" class="screen active">
+  <h1>🏫 OI班主任模拟器</h1>
+  <div class="subtitle">你是一位信息学竞赛班的班主任<br>带领学生从NOIP冲到NOI，在高压下生存两年</div>
+  <button class="btn primary" onclick="startGame()">新游戏</button>
+  <button class="btn" id="btn-load" onclick="loadGame()" disabled>继续游戏</button>
+  <button class="btn achievement" onclick="showAchievements()">🏅 成就图鉴</button>
+</div>
+
+<!-- Difficulty Selection -->
+<div id="difficulty-screen" class="screen">
+  <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;text-align:center;overflow-y:auto;padding:20px 0">
+    <h2 style="color:#7ecfff;margin-bottom:6px;font-size:1.4em">选择难度</h2>
+    <p style="color:#8899aa;font-size:0.85em;margin-bottom:28px">不同难度影响起始属性、行动效果、比赛难度和每周行动数</p>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px">
+      <button class="btn" onclick="selectDifficulty('easy')" style="text-align:left;padding:12px 16px">
+        <div style="font-size:1.1em;color:#5aff9e;font-weight:bold">🌱 佛系带班</div>
+        <div style="font-size:0.78em;color:#8899aa;margin-top:4px">每周4次行动 · 学生基础更好 · 精力消耗少 · 比赛更容易获奖</div>
+      </button>
+      <button class="btn" onclick="selectDifficulty('normal')" style="text-align:left;padding:12px 16px;border-color:#5a7acc">
+        <div style="font-size:1.1em;color:#7ecfff;font-weight:bold">📋 正常带班</div>
+        <div style="font-size:0.78em;color:#8899aa;margin-top:4px">每周3次行动 · 标准平衡 · 原汁原味的竞赛班主任体验</div>
+      </button>
+      <button class="btn" onclick="selectDifficulty('hardish')" style="text-align:left;padding:12px 16px;border-color:#cc7a5a">
+        <div style="font-size:1.1em;color:#ffaa5a;font-weight:bold">⚔️ 内卷先锋</div>
+        <div style="font-size:0.78em;color:#8899aa;margin-top:4px">每周3次行动 · 学生稍弱 · 精力更紧 · 比赛更卷 · 适合有经验的教练</div>
+      </button>
+      <button class="btn danger" onclick="selectDifficulty('hard')" style="text-align:left;padding:12px 16px">
+        <div style="font-size:1.1em;color:#ff5a5a;font-weight:bold">🔥 死亡冲锋</div>
+        <div style="font-size:0.78em;color:#8899aa;margin-top:4px">每周2次行动 · 学生基础薄弱 · 精力消耗大 · 比赛标准严苛 · 事件更多</div>
+      </button>
+      <button class="btn danger" onclick="selectDifficulty('hell')" style="text-align:left;padding:12px 16px;border-color:#8c1a1a">
+        <div style="font-size:1.1em;color:#ff2a2a;font-weight:bold">💀 地狱炼狱</div>
+        <div style="font-size:0.78em;color:#8899aa;margin-top:4px">每周仅2次行动 · 学生极弱 · 精力极度匮乏 · 比赛几乎不可能获奖 · 事件频发</div>
+      </button>
     </div>
+  </div>
+</div>
 
-    <!-- Intro -->
-    <div id="intro-screen" class="screen">
-      <p>
-        <span class="highlight">新学期开始了。</span><br><br>
-        校长把你叫到办公室：<br>
-        "这个竞赛班交给你了，两年时间。<br>
-        我要看到省一以上的成绩。<br>
-        经费不多，你看着办。"<br><br>
-        你看着手中的学生名单——<br>
-        五个孩子，五个可能性。<br><br>
-        <span class="highlight">每周，你最多可以做3件事。</span><br>
-        管理班级、教书、搞关系、应付检查…<br>
-        你的精力有限，但野心不妨大一点。
-      </p>
-      <button class="btn primary" onclick="beginGame()">接过名单，开始</button>
+<!-- Intro -->
+<div id="intro-screen" class="screen">
+  <p>
+    <span class="highlight">新学期开始了。</span><br><br>
+    校长把你叫到办公室：<br>
+    "这个竞赛班交给你了，两年时间。<br>
+    我要看到省一以上的成绩。<br>
+    经费不多，你看着办。"<br><br>
+    你看着手中的学生名单——<br>
+    五个孩子，五个可能性。<br><br>
+    <span class="highlight">每周，你最多可以做3件事。</span><br>
+    管理班级、教书、搞关系、应付检查…<br>
+    你的精力有限，但野心不妨大一点。
+  </p>
+  <button class="btn primary" onclick="beginGame()">接过名单，开始</button>
+</div>
+
+<!-- Game Screen -->
+<div id="game-screen" class="screen">
+  <!-- Week transition overlay -->
+  <div id="week-transition"><h2 id="wt-week"></h2><div class="sub" id="wt-sub"></div></div>
+
+  <div id="status-bar">
+    <div class="stat-card">
+      <div class="label">教学水平</div>
+      <div class="value" id="v-teaching">50</div>
+      <div class="stat-bar"><div class="fill teaching" id="b-teaching"></div></div>
     </div>
-
-    <!-- Game Screen -->
-    <div id="game-screen" class="screen">
-      <!-- Week transition overlay -->
-      <div id="week-transition"><h2 id="wt-week"></h2><div class="sub" id="wt-sub"></div></div>
-
-      <div id="status-bar">
-        <div class="stat-card">
-          <div class="label">教学水平</div>
-          <div class="value" id="v-teaching">50</div>
-          <div class="stat-bar"><div class="fill teaching" id="b-teaching"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="label">声望</div>
-          <div class="value" id="v-reputation">20</div>
-          <div class="stat-bar"><div class="fill reputation" id="b-reputation"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="label">精力</div>
-          <div class="value" id="v-energy">100</div>
-          <div class="stat-bar"><div class="fill energy" id="b-energy"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="label">经费</div>
-          <div class="value" id="v-budget">30</div>
-          <div class="stat-bar"><div class="fill budget" id="b-budget"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="label">校方好感</div>
-          <div class="value" id="v-school">50</div>
-          <div class="stat-bar"><div class="fill school" id="b-school"></div></div>
-        </div>
-        <div class="stat-card">
-          <div class="label">行动剩余</div>
-          <div class="value" id="v-actions">3</div>
-        </div>
-      </div>
-
-      <div id="info-row">
-        <span class="semester" id="info-semester"></span>
-        <span class="week" id="info-week"></span>
-        <span style="margin-left:auto" id="info-action"></span>
-      </div>
-
-      <div id="achievements-bar">
-        <span class="label">🏅</span>
-        <span id="achievements-list"></span>
-      </div>
-
-      <div id="students-panel">
-        <h3>👥 学生档案</h3>
-        <div id="students-list"></div>
-      </div>
-
-      <div id="actions-panel">
-        <h3>📋 本周行动（选择3项）</h3>
-        <div id="actions-grid"></div>
-      </div>
-
-      <div id="log-area"></div>
-
-      <div id="bottom-bar">
-        <button class="btn small" onclick="saveGame()">💾 存档</button>
-        <button class="btn small danger" onclick="resetGame()">🔄 重开</button>
-      </div>
+    <div class="stat-card">
+      <div class="label">声望</div>
+      <div class="value" id="v-reputation">20</div>
+      <div class="stat-bar"><div class="fill reputation" id="b-reputation"></div></div>
     </div>
-
-    <!-- Event Modal -->
-    <div class="modal-overlay" id="event-modal">
-      <div class="modal" id="event-content"></div>
+    <div class="stat-card">
+      <div class="label">精力</div>
+      <div class="value" id="v-energy">100</div>
+      <div class="stat-bar"><div class="fill energy" id="b-energy"></div></div>
     </div>
-
-    <!-- Ending Screen -->
-    <div id="ending-screen" class="screen"></div>
-
+    <div class="stat-card">
+      <div class="label">经费</div>
+      <div class="value" id="v-budget">30</div>
+      <div class="stat-bar"><div class="fill budget" id="b-budget"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">校方好感</div>
+      <div class="value" id="v-school">50</div>
+      <div class="stat-bar"><div class="fill school" id="b-school"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">行动剩余</div>
+      <div class="value" id="v-actions">3</div>
+    </div>
   </div>
 
-  <script src="game.js"></script>
+  <div id="info-row">
+    <span class="semester" id="info-semester"></span>
+    <span class="week" id="info-week"></span>
+    <span style="margin-left:auto" id="info-action"></span>
+  </div>
+
+  <div id="achievements-bar">
+    <span class="label">🏅</span>
+    <span id="achievements-list"></span>
+  </div>
+
+  <div id="students-panel">
+    <h3>👥 学生档案</h3>
+    <div id="students-list"></div>
+  </div>
+
+  <div id="actions-panel">
+    <h3 id="actions-header">📋 本周行动</h3>
+    <div class="action-tabs">
+      <div class="action-tab active" id="tab-culture" onclick="switchActionTab('culture')">📖 文化课</div>
+      <div class="action-tab" id="tab-compete" onclick="switchActionTab('compete')">🏆 竞赛</div>
+    </div>
+    <div id="actions-grid"></div>
+  </div>
+
+  <div id="log-area"></div>
+
+  <div id="bottom-bar">
+    <button class="btn small" onclick="saveGame()">💾 存档</button>
+    <button class="btn small achievement" onclick="showAchievements('game')">🏅 图鉴</button>
+    <button class="btn small danger" onclick="resetGame()">🔄 重开</button>
+  </div>
+</div>
+
+<!-- Event Modal -->
+<div class="modal-overlay" id="event-modal">
+  <div class="modal" id="event-content"></div>
+</div>
+
+<!-- Achievement Gallery -->
+<div id="achievements-screen" class="screen">
+  <h2>🏅 成就图鉴</h2>
+  <div class="ach-subtitle" id="ach-counter"></div>
+  <div class="ach-grid" id="ach-grid"></div>
+  <button class="btn" id="ach-back-btn" onclick="closeAchievements()">返回</button>
+</div>
+
+<!-- Ending Screen -->
+<div id="ending-screen" class="screen"></div>
+
+</div>
+
+<script src="game.js"></script>
 </body>
 </html>

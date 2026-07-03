@@ -14,53 +14,57 @@ const STUDENT_TEMPLATES = [
 ];
 
 const WEEKLY_ACTIONS = [
-  { id: 'teach', name: '精心备课', icon: '📖',
+  // 文化课
+  { id: 'teach', name: '精心备课', icon: '📖', category: 'culture',
     cost: { energy: -15 }, effect: { teaching: 5 },
     studentBoost: { algo: [2,4], mental: [-2,0] },
     desc: '深入准备本周课程，提升教学质量' },
-  { id: 'mock', name: '组织模拟赛', icon: '🏆',
-    cost: { energy: -20, budget: -5 }, effect: { teaching: 3, reputation: 3 },
-    studentBoost: { algo: [3,6], exp: [2,4], mental: [-5,0] },
-    desc: '举办一次内部模拟赛，锻炼实战能力' },
-  { id: 'tutor', name: '个别辅导', icon: '🎯',
-    cost: { energy: -15 }, effect: { teaching: 2 },
-    studentTarget: { algo: [8,15], mental: [3,8] },
-    desc: '针对薄弱学生进行一对一辅导' },
-  { id: 'report', name: '写教学报告', icon: '📝',
+  { id: 'report', name: '写教学报告', icon: '📝', category: 'culture',
     cost: { energy: -10 }, effect: { '学校好感': 8 },
     desc: '向校领导汇报竞赛班进展，争取支持' },
-  { id: 'lobby', name: '申请额外经费', icon: '💰',
-    cost: { energy: -10 }, effect: { budget: [10,20], '学校好感': [-5,3] },
-    desc: '软磨硬泡向学校要钱，但可能惹恼领导' },
-  { id: 'rest', name: '休息调整', icon: '😴',
-    cost: {}, effect: { energy: 30 },
-    studentBoost: { mental: [2,5] },
-    desc: '给自己放个假，也给学生们喘口气' },
-  { id: 'outreach', name: '邀请外校交流', icon: '🤝',
-    cost: { energy: -15, budget: -8 }, effect: { reputation: 5, teaching: 3 },
-    studentBoost: { algo: [2,5], exp: [3,6] },
-    desc: '联系其他学校的竞赛教练，组织联合训练' },
-  { id: 'algorithm', name: '专题算法课', icon: '🧮',
-    cost: { energy: -20 }, effect: { teaching: 6 },
-    studentBoost: { algo: [3,7], exp: [1,3], mental: [-3,0] },
-    desc: '集中攻克某个高难度算法专题' },
-  { id: 'buy_book', name: '购置竞赛书籍', icon: '📚',
+  { id: 'buy_book', name: '购置竞赛书籍', icon: '📚', category: 'culture',
     cost: { budget: -10 }, effect: { teaching: 2 },
     studentBoost: { algo: [1,3], math: [1,3], mental: [1,3] },
     desc: '添置最新的OI参考书和学习资料' },
-  { id: 'mental_care', name: '心理疏导', icon: '💬',
+  { id: 'mental_care', name: '心理疏导', icon: '💬', category: 'culture',
     cost: { energy: -10 }, effect: { reputation: 2 },
     studentBoost: { mental: [5,12] },
     desc: '找学生们聊聊，缓解竞赛压力' },
-  { id: 'cf_train', name: 'CF/ATC刷题', icon: '💻',
+  { id: 'rest', name: '休息调整', icon: '😴', category: 'culture',
+    cost: {}, effect: { energy: 30 },
+    studentBoost: { mental: [2,5] },
+    desc: '给自己放个假，也给学生们喘口气' },
+  // 竞赛
+  { id: 'mock', name: '组织模拟赛', icon: '🏆', category: 'compete',
+    cost: { energy: -20, budget: -5 }, effect: { teaching: 3, reputation: 3 },
+    studentBoost: { algo: [3,6], exp: [2,4], mental: [-5,0] },
+    desc: '举办一次内部模拟赛，锻炼实战能力' },
+  { id: 'algorithm', name: '专题算法课', icon: '🧮', category: 'compete',
+    cost: { energy: -20 }, effect: { teaching: 6 },
+    studentBoost: { algo: [3,7], exp: [1,3], mental: [-3,0] },
+    desc: '集中攻克某个高难度算法专题' },
+  { id: 'cf_train', name: 'CF/ATC刷题', icon: '💻', category: 'compete',
     cost: { energy: -12 }, effect: { teaching: 2 },
     studentBoost: { algo: [2,5], effort: [3,6], mental: [-3,2] },
     desc: '带学生在线实战，培养手感' },
-  { id: 'skip', name: '摆烂摸鱼', icon: '🦥',
+  { id: 'tutor', name: '个别辅导', icon: '🎯', category: 'compete',
+    cost: { energy: -15 }, effect: { teaching: 2 },
+    studentTarget: { algo: [8,15], mental: [3,8] },
+    desc: '针对薄弱学生进行一对一辅导' },
+  { id: 'outreach', name: '邀请外校交流', icon: '🤝', category: 'compete',
+    cost: { energy: -15, budget: -8 }, effect: { reputation: 5, teaching: 3 },
+    studentBoost: { algo: [2,5], exp: [3,6] },
+    desc: '联系其他学校的竞赛教练，组织联合训练' },
+  { id: 'lobby', name: '申请额外经费', icon: '💰', category: 'compete',
+    cost: { energy: -10 }, effect: { budget: [10,20], '学校好感': [-5,3] },
+    desc: '软磨硬泡向学校要钱，但可能惹恼领导' },
+  { id: 'skip', name: '摆烂摸鱼', icon: '🦥', category: 'compete',
     cost: {}, effect: { energy: 15, '学校好感': -5 },
     studentBoost: { mental: [3,8], algo: [-3,0] },
     desc: '这周累了，大家一起摸了吧' },
 ];
+
+let currentActionTab = 'culture';
 
 const RANDOM_EVENTS = [
   { id: 'parent_call', title: '家长来电',
@@ -119,7 +123,6 @@ const RANDOM_EVENTS = [
     condition: s => s.week > 8, weight: 6,
     choices: [
       { text: '安抚学生，强调实力胜于名额', effect: {},
-        // FIX: 改成函数，运行时求值
         get studentFx() { return game.students.map(st => ({ name: st.name, mental: -5, effort: 5 })); } },
       { text: '找关系打听情况（花费经费）', effect: { budget: -10, reputation: 5 }, condition: s => s.teacher.budget > 10,
         get studentFx() { return game.students.map(st => ({ name: st.name, mental: 2 })); } },
@@ -218,6 +221,60 @@ const ACTIONS_PER_WEEK = 3;
 const SEMESTER_NAMES = ['第一学年上学期', '第一学年下学期', '第二学年上学期', '第二学年下学期'];
 
 let game = null;
+let currentDifficulty = 'normal';
+
+const DIFFICULTIES = {
+  easy: {
+    name: '佛系带班', icon: '🌱',
+    actionsPerWeek: 4,
+    studentStatMul: 1.3,
+    energyCostMul: 0.8,
+    compThresholdMul: 0.85,
+    eventChance: 0.28,
+    teacherBonus: { energy: 20, budget: 15, schoolFavor: 10 },
+    studentBonus: { algo: 8, math: 5, mental: 10, effort: 5, exp: 5 },
+  },
+  normal: {
+    name: '正常带班', icon: '📋',
+    actionsPerWeek: 3,
+    studentStatMul: 1.0,
+    energyCostMul: 1.0,
+    compThresholdMul: 1.0,
+    eventChance: 0.35,
+    teacherBonus: {},
+    studentBonus: {},
+  },
+  hardish: {
+    name: '内卷先锋', icon: '⚔️',
+    actionsPerWeek: 3,
+    studentStatMul: 0.9,
+    energyCostMul: 1.1,
+    compThresholdMul: 1.1,
+    eventChance: 0.38,
+    teacherBonus: { energy: -5, budget: -5, schoolFavor: -5 },
+    studentBonus: { algo: -3, math: -2, mental: -3, effort: -2, exp: -2 },
+  },
+  hard: {
+    name: '死亡冲锋', icon: '🔥',
+    actionsPerWeek: 2,
+    studentStatMul: 0.75,
+    energyCostMul: 1.25,
+    compThresholdMul: 1.2,
+    eventChance: 0.45,
+    teacherBonus: { energy: -15, budget: -10, schoolFavor: -10 },
+    studentBonus: { algo: -8, math: -5, mental: -8, effort: -5, exp: -5 },
+  },
+  hell: {
+    name: '地狱炼狱', icon: '💀',
+    actionsPerWeek: 2,
+    studentStatMul: 0.6,
+    energyCostMul: 1.5,
+    compThresholdMul: 1.4,
+    eventChance: 0.55,
+    teacherBonus: { energy: -25, budget: -15, schoolFavor: -20 },
+    studentBonus: { algo: -15, math: -10, mental: -15, effort: -10, exp: -8 },
+  },
+};
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
@@ -226,17 +283,27 @@ function randRange(lo, hi) { return Math.floor(Math.random() * (hi - lo + 1)) + 
 function randPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function initGame() {
+  const diff = DIFFICULTIES[currentDifficulty];
+  const teacher = { teaching: 50, reputation: 20, energy: 100, budget: 30, schoolFavor: 50 };
+  for (const [k, v] of Object.entries(diff.teacherBonus)) {
+    teacher[k] = clamp((teacher[k] || 0) + v, 0, 100);
+  }
+  const students = STUDENT_TEMPLATES.map(t => {
+    const stats = { algo: t.algo, math: t.math, mental: t.mental, effort: t.effort, exp: t.exp };
+    for (const [k, v] of Object.entries(diff.studentBonus)) {
+      stats[k] = clamp(stats[k] + v, 0, 100);
+    }
+    return { name: t.name, archetype: t.archetype, desc: t.desc, stats };
+  });
   game = {
     week: 1,
     semester: 1,
-    actionsLeft: ACTIONS_PER_WEEK,
+    difficulty: currentDifficulty,
+    actionsLeft: diff.actionsPerWeek,
     ended: false,
     endingType: null,
-    teacher: { teaching: 50, reputation: 20, energy: 100, budget: 30, schoolFavor: 50 },
-    students: STUDENT_TEMPLATES.map(t => ({
-      name: t.name, archetype: t.archetype, desc: t.desc,
-      stats: { algo: t.algo, math: t.math, mental: t.mental, effort: t.effort, exp: t.exp },
-    })),
+    teacher,
+    students,
     history: [],
     achievements: [],
     competitionsDone: [],
@@ -248,15 +315,22 @@ function initGame() {
 }
 
 function startGame() {
+  showScreen('difficulty-screen');
+  checkSaveExists();
+}
+
+function selectDifficulty(diff) {
+  currentDifficulty = diff;
   initGame();
   showScreen('intro-screen');
-  checkSaveExists();
 }
 
 function beginGame() {
   showScreen('game-screen');
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
+  addLog('system', `${diff.icon} 难度：${diff.name} | 每周${diff.actionsPerWeek}次行动`);
   renderAll();
-  saveGame(); // Auto-save on game start
+  saveGame();
 }
 
 function showScreen(id) {
@@ -291,7 +365,8 @@ function renderStats() {
 function renderInfo() {
   document.getElementById('info-semester').textContent = SEMESTER_NAMES[game.semester - 1];
   document.getElementById('info-week').textContent = '第' + game.week + '周';
-  document.getElementById('info-action').textContent = '剩余行动：' + game.actionsLeft + '/' + ACTIONS_PER_WEEK;
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
+  document.getElementById('info-action').textContent = '剩余行动：' + game.actionsLeft + '/' + diff.actionsPerWeek;
 }
 
 function renderAchievements() {
@@ -329,10 +404,20 @@ function renderStudents() {
   }).join('');
 }
 
+function switchActionTab(tab) {
+  currentActionTab = tab;
+  document.getElementById('tab-culture').classList.toggle('active', tab === 'culture');
+  document.getElementById('tab-compete').classList.toggle('active', tab === 'compete');
+  renderActions();
+}
+
 function renderActions() {
   const grid = document.getElementById('actions-grid');
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
+  document.getElementById('actions-header').textContent = `📋 本周行动（选择${diff.actionsPerWeek}项）`;
   const available = game.actionsLeft > 0;
-  grid.innerHTML = WEEKLY_ACTIONS.map(a => {
+  const filtered = WEEKLY_ACTIONS.filter(a => a.category === currentActionTab);
+  grid.innerHTML = filtered.map(a => {
     const canAfford = checkActionCost(a);
     const disabled = !available || !canAfford;
     return `<button class="action-btn" ${disabled ? 'disabled' : ''}
@@ -356,15 +441,23 @@ function doAction(actionId) {
   const action = WEEKLY_ACTIONS.find(a => a.id === actionId);
   if (!action) return;
 
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   // Apply teacher effects
   applyEffects(game.teacher, action.effect);
-  applyEffects(game.teacher, action.cost);
+  // Apply energy cost with difficulty multiplier
+  const scaledCost = {};
+  for (const [k, v] of Object.entries(action.cost)) {
+    scaledCost[k] = k === 'energy' ? Math.round(v * diff.energyCostMul) : v;
+  }
+  applyEffects(game.teacher, scaledCost);
 
-  // Apply student effects
+  // Apply student effects (scaled by difficulty)
   if (action.studentBoost) {
     for (const st of game.students) {
       for (const [key, range] of Object.entries(action.studentBoost)) {
-        st.stats[key] = clamp(st.stats[key] + randRange(range[0], range[1]), 0, 100);
+        const raw = randRange(range[0], range[1]);
+        const scaled = Math.round(raw * diff.studentStatMul);
+        st.stats[key] = clamp(st.stats[key] + scaled, 0, 100);
       }
     }
   }
@@ -376,7 +469,9 @@ function doAction(actionId) {
     if (byMental[0].name !== byAlgo[0].name) targets.push(byMental[0]);
     for (const tgt of targets) {
       for (const [key, range] of Object.entries(action.studentTarget)) {
-        tgt.stats[key] = clamp(tgt.stats[key] + randRange(range[0], range[1]), 0, 100);
+        const raw = randRange(range[0], range[1]);
+        const scaled = Math.round(raw * diff.studentStatMul);
+        tgt.stats[key] = clamp(tgt.stats[key] + scaled, 0, 100);
       }
     }
   }
@@ -441,11 +536,12 @@ function endWeek() {
     return;
   }
 
-  // Random event
+  // Random event (chance scaled by difficulty)
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
   const availEvents = RANDOM_EVENTS.filter(e =>
     !game.eventsSeen.includes(e.id + '_' + game.week) &&
     e.condition(game) &&
-    Math.random() < 0.35
+    Math.random() < diff.eventChance
   );
   if (availEvents.length > 0) {
     triggerEvent(randPick(availEvents));
@@ -512,15 +608,17 @@ function closeCompModal(compId) {
 }
 
 function evaluateCompetition(comp) {
+  const diff = DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal;
+  const thMul = diff.compThresholdMul;
   const students = game.students.map(s => {
     const st = s.stats;
     const score = st.algo * 0.5 + st.math * 0.15 + st.exp * 0.2 + st.effort * 0.1 + st.mental * 0.05;
     const luck = randRange(-10, 10);
     const total = score + luck;
     let result, color, algoGain, expGain, mentalChange;
-    if (total >= 70) { result = '🥇 一等奖/金牌'; color = '#ffcc00'; algoGain = randRange(5, 10); expGain = randRange(5, 10); mentalChange = randRange(5, 15); }
-    else if (total >= 55) { result = '🥈 二等奖/银牌'; color = '#c0c0c0'; algoGain = randRange(3, 7); expGain = randRange(3, 7); mentalChange = randRange(0, 10); }
-    else if (total >= 40) { result = '🥉 三等奖/铜牌'; color = '#cd7f32'; algoGain = randRange(1, 4); expGain = randRange(1, 4); mentalChange = randRange(-5, 5); }
+    if (total >= Math.round(70 * thMul)) { result = '🥇 一等奖/金牌'; color = '#ffcc00'; algoGain = randRange(5, 10); expGain = randRange(5, 10); mentalChange = randRange(5, 15); }
+    else if (total >= Math.round(55 * thMul)) { result = '🥈 二等奖/银牌'; color = '#c0c0c0'; algoGain = randRange(3, 7); expGain = randRange(3, 7); mentalChange = randRange(0, 10); }
+    else if (total >= Math.round(40 * thMul)) { result = '🥉 三等奖/铜牌'; color = '#cd7f32'; algoGain = randRange(1, 4); expGain = randRange(1, 4); mentalChange = randRange(-5, 5); }
     else { result = '❌ 未获奖'; color = '#ff5a5a'; algoGain = randRange(0, 2); expGain = randRange(0, 2); mentalChange = randRange(-15, -5); }
     return { name: s.name, result, color, algo: st.algo, exp: st.exp, mental: st.mental, algoGain, expGain, mentalChange, score: total };
   });
@@ -612,7 +710,7 @@ function resolveEvent(eventId, choiceIndex) {
 }
 
 function advanceWeek() {
-  game.actionsLeft = ACTIONS_PER_WEEK;
+  game.actionsLeft = (DIFFICULTIES[game.difficulty] || DIFFICULTIES.normal).actionsPerWeek;
   game.week++;
 
   if (game.week > TOTAL_WEEKS) {
@@ -656,15 +754,75 @@ function checkAchievements(compResult, context) {
     } else if (compResult) {
       pass = ach.check(game, compResult, context);
     } else {
-      pass = ach.check(game, null, context);
+      // Skip competition-dependent achievements when no compResult
+      try {
+        pass = ach.check(game, null, context);
+      } catch(e) {
+        pass = false;
+      }
     }
     if (pass) {
       game.achievements.push({ id: ach.id, name: ach.name, desc: ach.desc });
       addLog('achievement', `🏅 获得成就：${ach.name}`);
       gained = true;
+      savePersistentAchievement(ach.id);
     }
   }
   if (gained) renderAchievements();
+}
+
+// Persistent achievement storage (across games)
+function getPersistentAchievements() {
+  try {
+    return JSON.parse(localStorage.getItem('oi_teacher_achievements') || '[]');
+  } catch(e) { return []; }
+}
+
+function savePersistentAchievement(achId) {
+  const all = getPersistentAchievements();
+  if (!all.includes(achId)) {
+    all.push(achId);
+    try { localStorage.setItem('oi_teacher_achievements', JSON.stringify(all)); } catch(e) {}
+  }
+}
+
+let _achReturnTo = 'title';
+
+function showAchievements(from) {
+  _achReturnTo = from || 'title';
+  const unlocked = getPersistentAchievements();
+  const total = ACHIEVEMENTS.length;
+  const unlockedCount = unlocked.length;
+  document.getElementById('ach-counter').textContent = `已解锁 ${unlockedCount} / ${total}`;
+  const grid = document.getElementById('ach-grid');
+  grid.innerHTML = ACHIEVEMENTS.map(ach => {
+    const isUnlocked = unlocked.includes(ach.id);
+    const cls = isUnlocked ? 'unlocked' : 'locked';
+    const icon = isUnlocked ? ach.name.split(' ')[0] : '🔒';
+    const name = isUnlocked ? ach.name : '???';
+    const desc = isUnlocked ? ach.desc : '尚未解锁';
+    const statusText = isUnlocked ? '✅ 已解锁' : '🔒 未解锁';
+    const statusCls = isUnlocked ? 'done' : 'lock';
+    return `<div class="ach-item ${cls}">
+      <div class="ach-icon">${icon}</div>
+      <div class="ach-info">
+        <div class="ach-name">${name}</div>
+
+        <div class="ach-desc">${desc}</div>
+      </div>
+      <div class="ach-status ${statusCls}">${statusText}</div>
+    </div>`;
+  }).join('');
+  showScreen('achievements-screen');
+}
+
+function closeAchievements() {
+  if (_achReturnTo === 'game' && game && !game.ended) {
+    showScreen('game-screen');
+  } else {
+    showScreen('title-screen');
+    checkSaveExists();
+  }
 }
 
 function getStudent(name) { return game.students.find(s => s.name === name); }
@@ -747,6 +905,7 @@ function showEnding() {
     <div class="ending-title">${ending.title}</div>
     <div class="ending-desc">${ending.desc}</div>
     <div class="stats-summary">
+      难度：${DIFFICULTIES[game.difficulty || 'normal'].icon} ${DIFFICULTIES[game.difficulty || 'normal'].name}<br>
       教学水平: ${Math.round(game.teacher.teaching)} | 声望: ${Math.round(game.teacher.reputation)}<br>
       校方好感: ${Math.round(game.teacher.schoolFavor)} | 剩余经费: ${Math.round(game.teacher.budget)}<br>
       学生榜: ${game.students.map(s => `${s.name}(算法${s.stats.algo})`).join(' · ')}
@@ -777,6 +936,18 @@ function loadGame() {
     game = JSON.parse(raw);
     game._noRestStreak = game._noRestStreak || 0;
     game._skipCount = 0;
+    // Backward compatibility: old saves default to normal
+    if (!game.difficulty) game.difficulty = 'normal';
+    if (!DIFFICULTIES[game.difficulty]) game.difficulty = 'normal';
+    currentDifficulty = game.difficulty;
+    // Don't load finished games
+    if (game.ended) {
+      alert('这个存档已经通关了，请开始新游戏');
+      localStorage.removeItem('oi_teacher_save');
+      game = null;
+      checkSaveExists();
+      return;
+    }
     showScreen('game-screen');
     renderAll();
     addLog('system', '📂 存档已加载');
@@ -793,9 +964,18 @@ function resetGame() {
 }
 
 function checkSaveExists() {
-  const has = !!localStorage.getItem('oi_teacher_save');
+  const raw = localStorage.getItem('oi_teacher_save');
+  const has = !!raw;
   document.getElementById('btn-load').disabled = !has;
-  if (has) document.getElementById('btn-load').textContent = '继续游戏';
+  if (has) {
+    try {
+      const save = JSON.parse(raw);
+      const diffName = DIFFICULTIES[save.difficulty || 'normal']?.name || '正常带班';
+      document.getElementById('btn-load').textContent = '继续游戏（' + diffName + '）';
+    } catch(e) {
+      document.getElementById('btn-load').textContent = '继续游戏';
+    }
+  }
 }
 
 // Init

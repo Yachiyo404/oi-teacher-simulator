@@ -10,8 +10,7 @@
 
 | 文件 | 路径 | 说明 |
 |------|------|------|
-| 主版本（单文件） | `workspace/oi-teacher-simulator.html` | **当前主力版本**，包含所有修复 |
-| 拆分版 | `workspace/oi-teacher-simulator/` | index.html + game.js + style.css，6/7 实验性拆分，未完全同步 |
+| 多文件版（主力） | `workspace/oi-teacher-simulator/` | index.html + game.js + style.css |
 
 ## 已完成功能
 
@@ -41,9 +40,9 @@
 
 - [ ] history 数组裁剪可能不够完善
 - [ ] 周过渡动画可以更平滑
-- [ ] 拆分版（oi-teacher-simulator/）与单文件版未同步
+- [x] 已拆分为多文件版（7/3）
 
 ## 当前开发阶段
 
 **阶段 1 已完成** — 核心可玩、无崩溃 Bug、基础功能齐全
-**新增：难度选择系统（6/18）— 5档难度**
+**新增：多文件拆分（7/3）— index.html + game.js + style.css**

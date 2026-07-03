@@ -2,6 +2,11 @@
 
 > 每次有改动时追加一行。新条目在最上面。
 
+## 2026-07-03
+- 单文件版拆分为多文件版（index.html + game.js + style.css）
+- 删除单文件版 oi-teacher-simulator.html
+- 删除旧的 download.tar.gz
+
 ## 2026-06-13
 - 创建项目管理结构（STATUS / ROADMAP / LOG）
 - 确定 3 个月开发周期
